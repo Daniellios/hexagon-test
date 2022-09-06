@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react"
 import axios from "axios"
 import { useRouter } from "next/router"
 import Link from "next/link"
+import { useAuth } from "../hooks/useAuth"
 
 const Auth = () => {
   const [userLogin, setUserLogin] = useState<string>("")
@@ -9,6 +10,14 @@ const Auth = () => {
   const [userPassword, setUserPassword] = useState<string>("")
 
   const [error, setError] = useState<boolean>(false)
+  const {
+    token,
+    setToken,
+    sessionUserName,
+    setSessionUserName,
+    sessionUserPassword,
+    setSessionUserPassword,
+  } = useAuth()
 
   const router = useRouter()
 
@@ -22,28 +31,30 @@ const Auth = () => {
 
   const handleSignUpInfo = async () => {
     const BASE_SIGNUP_URL = "http://79.143.31.216/register?"
-    try {
-      const response = await axios({
-        method: "post",
-        url: `${
+    await axios
+      .post(
+        `${
           BASE_SIGNUP_URL +
           "username=" +
           userLogin +
           "&password=" +
           userPassword
-        }`,
+        }`
+      )
+      .then((res) => {
+        if (res) {
+          console.log(res)
+        }
       })
-      setUserLogin("")
-      setUserPassword("")
-    } catch (e) {
-      console.log(e)
-    }
+      .catch((e) => console.log(e))
+    setUserLogin("")
+    setUserPassword("")
   }
 
   const handleLoginInfo = async () => {
     const BASE_LOGIN_URL = "http://79.143.31.216/login"
 
-    const response = await axios
+    await axios
       .post(
         BASE_LOGIN_URL,
         new URLSearchParams({
@@ -62,24 +73,25 @@ const Auth = () => {
       )
       .then((res) => {
         console.log(res)
-        console.log(res.data.access_token)
-        console.log(res.data.token_type)
-
-        // document.cookie = res.data.access_token
-        return res
+        console.log(`${"Bearer " + res.data.access_token}`)
+        if (res) {
+          setSessionUserPassword(userPassword)
+          setSessionUserName(userLogin)
+          setToken(`${res.data.access_token}`)
+          setUserLogin("")
+          setUserPassword("")
+          router.push("/")
+        }
       })
       .catch((err) => {
+        console.log(err)
         setError(true)
+        setUserLogin("")
+        setUserPassword("")
         setTimeout(() => {
           setError(false)
         }, 1500)
       })
-
-    if (response) {
-      setUserLogin("")
-      setUserPassword("")
-      router.push("/")
-    }
   }
 
   return (

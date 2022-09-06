@@ -12,11 +12,18 @@ const UrlForm = () => {
 
   const handleCopied = () => {
     console.log(shortenedLink)
-    setIsCopied(true)
-    setUserInput("")
-    setTimeout(() => {
-      setIsCopied(false)
-    }, 1200)
+    if (userInput) {
+      setIsCopied(true)
+      setUserInput("")
+      setTimeout(() => {
+        setIsCopied(false)
+      }, 1200)
+    } else {
+      setShortenedLink("No link provided")
+      setTimeout(() => {
+        setShortenedLink("Submit link and get it here!")
+      }, 1200)
+    }
   }
 
   console.log(userInput)
@@ -45,7 +52,7 @@ const UrlForm = () => {
   }
 
   return (
-    <div className="flex flex-col gap-4 items-center justify-center">
+    <div className="flex flex-col gap-4 items-center justify-center mt-20">
       <h2 className="text-xl font-bold">URL Shortener</h2>
       <div className="flex gap-4 items-center justify-center">
         <input
@@ -71,11 +78,11 @@ const UrlForm = () => {
           <button
             className={
               isCopied
-                ? "border-2 border-green-500 text-green-500 font-medium px-5 py-2 ml-4 rounded-md w-80 text-center"
-                : "border-2 border-blue-500 text-blue-500 font-medium px-5 py-2 ml-4 rounded-md  w-80 text-center"
+                ? "border-2 border-green-500 text-green-500 font-medium px-5 py-2 rounded-md w-80 text-center"
+                : "border-2 border-blue-500 text-blue-500 font-medium px-5 py-2 rounded-md  w-80 text-center"
             }
           >
-            {isCopied ? "COPIED" : shortenedLink}
+            {isCopied && userInput ? "COPIED" : shortenedLink}
           </button>
         </CopyToClipboard>
       </div>

@@ -1,3 +1,13 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+@layer utilities {
+  .active-page {
+    @apply text-white bg-blue-500 px-4 py-2 hover:cursor-pointer rounded;
+  }
+
+  .incative-page {
+    @apply px-4 py-2 hover:cursor-pointer hover:bg-blue-500 hover:text-white rounded;
+  }
+}
