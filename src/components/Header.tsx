@@ -19,7 +19,7 @@ const Header = () => {
   }
 
   return (
-    <div className="flex w-full justify-end items-center border-b  border-black py-2 px-8 mb-12 gap-8 absolute left-0">
+    <div className="flex w-full justify-end items-center border-b-2  border-black py-2 px-8 mb-12 gap-8 absolute left-0">
       <div className="flex justify-center items-center gap-4 ">
         <h2 className="font-semibold">{sessionUserName}</h2>
         <button

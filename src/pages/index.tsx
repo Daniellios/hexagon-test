@@ -8,6 +8,8 @@ import Layout from "../components/Layout"
 import Pagination from "../components/Pagination"
 import { useAuth } from "../hooks/useAuth"
 
+import { GrRefresh } from "react-icons/gr"
+
 interface ILinkInfo {
   counter: number
   id: number
@@ -16,6 +18,7 @@ interface ILinkInfo {
 }
 
 const Home: NextPage = () => {
+  const { token, sessionUserName, sessionUserPassword } = useAuth()
   const [pageLimit, setPageLimit] = useState<number>(20)
   const [currentPage, setCurrentPage] = useState<number>(1)
   const [linkList, setLinkList] = useState([])
@@ -25,47 +28,40 @@ const Home: NextPage = () => {
   const SHORT_URL = "http://79.143.31.216/s/"
 
   const router = useRouter()
-  const { token, sessionUserName, sessionUserPassword } = useAuth()
 
   console.log(token, sessionUserName, sessionUserPassword)
 
   const fetchData = async () => {
-    // const BASE_STATS_URL = `http://79.143.31.216/statistics?offset=${pageOffset}&limit=${pageLimit}`
     const BASE_STATS_URL = `http://79.143.31.216/statistics?offset=0&limit=0`
-    console.log("rEWUQWRE")
 
-    await axios({
-      method: "get",
-      url: `http://79.143.31.216/statistics?offset=0&limit=0`,
-      params: {
-        username: sessionUserName,
-        password: sessionUserPassword,
-      },
-      headers: {
-        accept: "application/json",
-        Authorization: "Bearer " + token,
-      },
-    })
+    const response = await axios
+      .get(`http://79.143.31.216/statistics?offset=0&limit=0`, {
+        headers: {
+          accept: "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+      })
       .then((res) => {
-        console.log(res)
-        if (res.data.length > 1) {
-          console.log("tetete")
-
-          setLinkList(res.data)
-          setInitialListList(res.data)
-          setIsLoading(false)
-        }
+        console.log("data", res)
+        console.log("tetete")
+        setLinkList(res.data)
+        setInitialListList(res.data)
+        setIsLoading(false)
+        return res.data
       })
       .catch((e) => {
         console.log(e)
       })
+
+    // if (response) {
+    //   setLinkList(response)
+    // }
   }
 
   useEffect(() => {
     if (token && sessionUserName && sessionUserPassword) {
-      console.log("ALLL HERE")
-
       fetchData()
+      console.log("ALLL HERE")
     } else {
       router.push("/auth")
     }
@@ -85,6 +81,10 @@ const Home: NextPage = () => {
 
   console.log(currentPageLinks)
 
+  const handleRefresh = () => {
+    fetchData()
+  }
+
   return (
     <>
       <Head>
@@ -96,21 +96,30 @@ const Home: NextPage = () => {
       <Layout>
         <div className="flex flex-col gap-4 w-full">
           {/* PAGINATION-FILTER */}
-
           {isLoading ? (
             <></>
           ) : (
-            <div className="flex justify-between items-center w-full">
+            <div className="flex justify-between items-center w-full pb-4">
               <Pagination
                 linksPerPage={pageLimit}
                 totalLinks={linkList.length}
                 selectPage={selectPage}
                 activePage={currentPage}
               ></Pagination>
-              <FIlter
-                linkList={currentPageLinks}
-                setCurrentPageLinks={setCurrentPageLinks}
-              ></FIlter>
+              {linkList.length > 1 ? (
+                <FIlter
+                  linkList={currentPageLinks}
+                  setCurrentPageLinks={setCurrentPageLinks}
+                ></FIlter>
+              ) : (
+                <></>
+              )}
+              <button
+                onClick={handleRefresh}
+                className="px-2 py-[12px] h-full text-blue-500 border-2 border-blue-500 rounded flex self-center justify-end hover:scale-95"
+              >
+                <GrRefresh></GrRefresh>
+              </button>
             </div>
           )}
 
@@ -123,7 +132,7 @@ const Home: NextPage = () => {
               <div className="grid grid-cols-4  border-b border-black px-4 py-2">
                 <h1 className="font-bold">SHORT URL</h1>
                 <h1 className="font-bold">ORIGINAL URL </h1>
-                <h1 className="font-bold"> VISITS</h1>
+                <h1 className="font-bold">VISITS</h1>
               </div>
 
               {/* TABLE CONTENTS */}
@@ -137,6 +146,7 @@ const Home: NextPage = () => {
                       <a
                         className="hover:text-blue-500 font-medium"
                         href={link.target}
+                        target="_blank"
                       >
                         {SHORT_URL + link.short}
                       </a>
@@ -145,6 +155,7 @@ const Home: NextPage = () => {
                       <a
                         className="hover:text-blue-500 font-medium"
                         href={link.target}
+                        target="_blank"
                       >
                         {link.target}
                       </a>
@@ -161,24 +172,3 @@ const Home: NextPage = () => {
 }
 
 export default Home
-
-{
-  /* <div className="w-full flex ">
-          <button
-            onClick={hanldePreviousPage}
-            className="hover:text-blue-500 p-2 flex justify-center items-center"
-          >
-            <AiOutlineLeft></AiOutlineLeft>
-          </button>
-
-          <button className="border hover:bg-blue-500 hover:text-white px-4 py-2">
-            1
-          </button>
-          <button
-            onClick={handleNextPage}
-            className="hover:text-blue-500 p-2 flex justify-center items-center"
-          >
-            <AiOutlineRight></AiOutlineRight>
-          </button>
-        </div> */
-}

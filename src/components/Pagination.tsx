@@ -21,6 +21,8 @@ const Pagination = ({
     countPages()
   }, [totalLinks])
 
+  console.log(totalLinks)
+
   const handleSelectedPage = (pgNum: number) => {
     selectPage(pgNum)
   }
@@ -38,34 +40,36 @@ const Pagination = ({
     return
   }
 
-  if (totalLinks.length < 21) {
-    return <></>
-  } else {
-    return (
-      <div className="pb-10 w-1/2  flex justify-center items-center gap-4">
-        <button className="incative-page" onClick={handlePreviousPage}>
-          <AiOutlineLeft></AiOutlineLeft>
-        </button>
-        <ul className="flex gap-4 overflow-x-auto">
-          {currentPageNums &&
-            currentPageNums.map((pgNum: number) => (
-              <li
-                onClick={() => handleSelectedPage(pgNum)}
-                className={
-                  activePage === pgNum ? "active-page" : "incative-page"
-                }
-                key={pgNum}
-              >
-                {pgNum}
-              </li>
-            ))}
-        </ul>
-        <button className="incative-page" onClick={handleNextPage}>
-          <AiOutlineRight></AiOutlineRight>
-        </button>
-      </div>
-    )
-  }
+  return (
+    <>
+      {totalLinks < 21 ? (
+        <></>
+      ) : (
+        <div className=" w-1/2 flex justify-center items-center gap-4">
+          <button className="incative-page" onClick={handlePreviousPage}>
+            <AiOutlineLeft></AiOutlineLeft>
+          </button>
+          <ul className="flex gap-4 overflow-x-auto">
+            {currentPageNums &&
+              currentPageNums.map((pgNum: number) => (
+                <li
+                  onClick={() => handleSelectedPage(pgNum)}
+                  className={
+                    activePage === pgNum ? "active-page" : "incative-page"
+                  }
+                  key={pgNum}
+                >
+                  {pgNum}
+                </li>
+              ))}
+          </ul>
+          <button className="incative-page" onClick={handleNextPage}>
+            <AiOutlineRight></AiOutlineRight>
+          </button>
+        </div>
+      )}
+    </>
+  )
 }
 
 export default Pagination

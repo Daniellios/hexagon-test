@@ -1,6 +1,7 @@
 import React, { useState } from "react"
 import { CopyToClipboard } from "react-copy-to-clipboard"
 import axios from "axios"
+import { useAuth } from "../hooks/useAuth"
 
 const UrlForm = () => {
   const [userInput, setUserInput] = useState<string>("")
@@ -9,6 +10,14 @@ const UrlForm = () => {
   )
   const [isCopied, setIsCopied] = useState<boolean>(false)
   const SHORT_URL = "http://79.143.31.216/s/"
+  const {
+    token,
+    setToken,
+    sessionUserName,
+    setSessionUserName,
+    sessionUserPassword,
+    setSessionUserPassword,
+  } = useAuth()
 
   const handleCopied = () => {
     console.log(shortenedLink)
@@ -26,26 +35,20 @@ const UrlForm = () => {
     }
   }
 
-  console.log(userInput)
-
   const shortenUrl = async () => {
     const BASE_SQUEEZE_URL = "http://79.143.31.216/squeeze?link="
     try {
-      const response = await axios({
-        method: "post",
-        url: `${BASE_SQUEEZE_URL}`,
+      const response = await axios.post("http://79.143.31.216/squeeze", {
         params: {
-          link: userInput,
+          link: `${userInput}`,
         },
         headers: {
           accept: "application/json",
-          Authorization:
-            "Bearer 9s5-rsC-2jQYZixgDWCyMX7kzAK5w70KQlJR7Rot1wSZqY_hAqRJDdrMM238-6eVi8k",
+          Authorization: `Bearer ${token}`,
           "Content-Type": "application/x-www-form-urlencoded",
         },
       })
       setShortenedLink(`${SHORT_URL + response.data.short}`)
-      console.log(response)
     } catch (e) {
       console.log(e)
     }

@@ -122,7 +122,7 @@ const Auth = () => {
               className={
                 error
                   ? "p-2 w-full border border-red-500 rounded"
-                  : "p-2 w-full border border-black rounded"
+                  : "p-2 w-full border border-black rounded focus:outline-blue-500"
               }
               type="text"
               onChange={hadleUserLogin}
@@ -144,7 +144,7 @@ const Auth = () => {
               className={
                 error
                   ? "p-2 w-full border border-red-500 rounded"
-                  : "p-2 w-full border border-black rounded"
+                  : "p-2 w-full border border-black rounded focus:outline-blue-500"
               }
               value={userPassword}
               type="text"
@@ -157,14 +157,14 @@ const Auth = () => {
         {/* SIGN/LOG UP/IN  */}
         <button
           onClick={handleSignUpInfo}
-          className="w-full rounded text-black p-2 font-semibold border border-black hover:scale-[0.99]"
+          className="w-full rounded text-black p-2 font-semibold border border-black "
         >
           SIGN UP
         </button>
 
         <button
           onClick={handleLoginInfo}
-          className="bg-blue-500 w-full rounded text-white p-2 font-semibold border border-transparent hover:scale-[0.99]"
+          className="bg-blue-500 w-full rounded text-white p-2 font-semibold border border-transparent "
         >
           LOG IN
         </button>
